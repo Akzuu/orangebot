@@ -250,8 +250,8 @@ udpServer.on("message", function(msg, info) {
     bot.servers[addr].lastlog = new Date().getTime();
   }
   
-  // Map end xd
-  re = named(/Game Over: .* score (:<ct_score>[0-9].):(:<t_score>[0-9].) after (:<duration>[0-9]+) min/)
+  // Map end
+  re = named(/Game Over: .* score (:<ct_score>[0-9]+):(:<t_score>[0-9]+) after (:<duration>[0-9]+) min/);
   match = re.exec(text);
   if (match !== null) {
     t_score = parseInt(match.capture("t_score"));
