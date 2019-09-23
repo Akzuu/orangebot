@@ -11,6 +11,9 @@
     "prettier": "prettier --config .prettierrc --write \"**/*.js\" \"**/*.json\""
   },
   "dependencies": {
+    "config": "^3.2.2",
+    "fastify": "^2.8.0",
+    "fastify-swagger": "^2.4.0",
     "ip": "^1.1.5",
     "irc": "^0.5.2",
     "named-regexp": "^0.1.1",
