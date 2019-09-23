@@ -1,38 +1,21 @@
-const config = require('config');
 const fastify = require('fastify');
 const fastifySwagger = require('fastify-swagger');
 const routes = require('./routes');
 
 // Initialize swagger
-const initSwagger = () => {
-  const swaggerOptions = config.get('swagger');
-
-  return {
-    routePrefix: '/documentation',
-    swagger: {
-      info: {
-        title: 'Project AKL 2020 Web Backend - Core',
-        description: 'Project AKL 2020 Web Backend - Core',
-        version: '1.0.0',
-      },
-      host: swaggerOptions.host,
-      schemes: swaggerOptions.schemes,
-      consumes: ['application/json'],
-      produces: ['application/json'],
-      tags: [
-        {
-          name: 'Integration',
-          description: 'Integration endpoints for accessing and controlling data',
-        },
-        {
-          name: 'Utility',
-          description: 'Utility endpoints',
-        },
-      ],
+const initSwagger = () => ({
+  routePrefix: '/documentation',
+  swagger: {
+    info: {
+      title: 'AKL Bot',
+      description: 'Bot for AKL servers',
+      version: '1.0.0',
     },
-    exposeRoute: true,
-  };
-};
+    consumes: ['application/json'],
+    produces: ['application/json'],
+  },
+  exposeRoute: true,
+});
 
 const serverRoutes = async (server) => {
   Object.keys(routes).forEach((key) => {
@@ -44,7 +27,7 @@ const serverRoutes = async (server) => {
  * Init server
  * @param {Object} options Optional.
  */
-const initServer = async (options) => {
+const initServer = async (options, port) => {
   const server = fastify(options);
 
   server
@@ -54,7 +37,7 @@ const initServer = async (options) => {
 
   return {
     start: async () => {
-      await server.listen(APPLICATION_PORT, '0.0.0.0');
+      await server.listen(port, '0.0.0.0');
       return server;
     },
   };

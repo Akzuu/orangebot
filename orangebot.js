@@ -51,6 +51,15 @@ const bot = {
   servers: {},
 };
 
+// Create HTTP server
+const { initServer } = require('./http-server');
+
+const startHttpServer = async () => {
+  const server = await initServer({ logger: false }, nconf.get('port'));
+  await server.start();
+};
+
+startHttpServer();
 
 if (nconf.get('irc')) {
   bot.ircClient = new irc.Client(nconf.get('irc:server'), nconf.get('irc:nick'), {
