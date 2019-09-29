@@ -44,6 +44,11 @@ const handler = async (req, reply) => {
   };
   const messages = req.body.split('\n');
 
+  if (!messages || messages.length === 0) {
+    reply.code(400).send({
+      status: 'No Body',
+    });
+  }
   try {
     messages.forEach((msg) => {
       msgHandler(msg, info);
