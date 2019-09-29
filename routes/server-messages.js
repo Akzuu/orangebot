@@ -9,12 +9,6 @@ const schema = {
       id: {
         type: 'string',
       },
-    },
-    required: ['id'],
-  },
-  query: {
-    type: 'object',
-    properties: {
       rconPassword: {
         type: 'string',
       },
@@ -24,10 +18,11 @@ const schema = {
       rconAddr: {
         type: 'string',
       },
-      message: {
-        type: 'string',
-      },
     },
+    required: ['id', 'rconPassword', 'rconPort', 'rconAddr'],
+  },
+  body: {
+    type: 'string',
   },
   response: {
 
@@ -36,15 +31,17 @@ const schema = {
 
 const handler = async (req, reply) => {
   const info = {
-    address: req.query.rconAddr,
-    port: req.query.rconPort,
-    rconPass: req.query.rconPass,
+    address: req.params.rconAddr,
+    port: req.params.rconPort,
+    rconPass: req.params.rconPass,
     container: req.params.id,
   };
-  const msg = req.query.message;
+  const messages = req.body.split('\n');
 
   try {
-    msgHandler(msg, info);
+    messages.forEach((msg) => {
+      msgHandler(msg, info);
+    });
   } catch (error) {
     console.log(error);
     reply.status(500).send(error);
@@ -58,8 +55,8 @@ const handler = async (req, reply) => {
 };
 
 module.exports = {
-  method: 'GET',
-  url: '/:id/log',
+  method: 'POST',
+  url: 'log/:id/addr/:rconAddr/port/:rconPort/pw/:rconPassword',
   handler,
   schema,
 };
