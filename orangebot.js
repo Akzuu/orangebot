@@ -8,10 +8,8 @@ const fs = require('fs');
 const irc = require('irc');
 const { named } = require('named-regexp');
 const dns = require('dns');
-const dgram = require('dgram');
 const request = require('request');
 
-const udpServer = dgram.createSocket('udp4');
 const TelegramBot = require('node-telegram-bot-api');
 
 const ipModule = require('ip');
@@ -40,7 +38,7 @@ if (nconf.get('ip') === '') nconf.set('ip', ipModule.address());
 
 const admins = nconf.get('admins');
 const statics = nconf.get('statics');
-const rconPass = nconf.get('rconPass');
+// const rconPass = nconf.get('rconPass');
 const whitelist = nconf.get('whitelist');
 // const pool = nconf.get('pool');
 const telegram = nconf.get('telegram');
@@ -123,7 +121,7 @@ if (bot.hasOwnProperty('telegramBot')) {
   });
 }
 
-udpServer.on('message', (msg, info) => {
+const msgHandler = (msg, info) => {
   const addr = `${info.address}:${info.port}`;
   const text = msg.toString();
 
@@ -132,12 +130,13 @@ udpServer.on('message', (msg, info) => {
   let param; let cmd; let re; let
     match;
 
-  if (bot.servers[addr] === undefined && addr.match(/172.17.0./)) {
+  if (bot.servers[info.container] === undefined) {
     bot.servers[addr] = new Server({
-      address: String(addr),
-      pass: String(rconPass),
+      address: addr,
+      pass: info.rconPass,
       nconf,
       bot,
+      container: info.container,
     });
   }
 
@@ -421,7 +420,7 @@ udpServer.on('message', (msg, info) => {
 
     bot.servers[addr].lastlog = new Date().getTime();
   }
-});
+};
 
 setInterval(() => {
   for (const i in bot.servers) {
@@ -478,9 +477,6 @@ for (const i in statics) {
   }
 }
 
-// Bind UDP server
-udpServer.bind(nconf.get('port'));
-
 process.on('uncaughtException', (err) => {
   console.log(err);
 });
@@ -496,3 +492,7 @@ console.log(
     nconf.get('port')
   };rcon log on;rcon rcon_password YOUR_RCON`,
 );
+
+module.exports = {
+  msgHandler,
+};

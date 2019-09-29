@@ -1,6 +1,8 @@
+const { msgHandler } = require('../orangebot');
+
 const schema = {
-  description: 'Life check',
-  summary: 'Life check',
+  description: '',
+  summary: '',
   params: {
     type: 'object',
     properties: {
@@ -22,6 +24,9 @@ const schema = {
       rconAddr: {
         type: 'string',
       },
+      message: {
+        type: 'string',
+      },
     },
   },
   response: {
@@ -29,7 +34,23 @@ const schema = {
   },
 };
 
-const handler = (req, reply) => {
+const handler = async (req, reply) => {
+  const info = {
+    address: req.query.rconAddr,
+    port: req.query.rconPort,
+    rconPass: req.query.rconPass,
+    container: req.params.id,
+  };
+  const msg = req.query.message;
+
+  try {
+    await msgHandler(msg, info);
+  } catch (error) {
+    console.log(error);
+    reply.status(500).send(error);
+    return;
+  }
+
   reply.send({
     status: 'OK',
     date: new Date(),
