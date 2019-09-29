@@ -471,11 +471,11 @@ setInterval(() => {
 }, 100);
 
 // Add static servers
-for (const i in statics) {
-  if (statics.hasOwnProperty(i)) {
-    addServer(statics[i].host, statics[i].port, statics[i].pass);
-  }
-}
+// for (const i in statics) {
+//   if (statics.hasOwnProperty(i)) {
+//     addServer(statics[i].host, statics[i].port, statics[i].pass);
+//   }
+// }
 
 process.on('uncaughtException', (err) => {
   console.log(err);
