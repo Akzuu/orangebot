@@ -1,4 +1,4 @@
-const { msgHandler } = require('../orangebot');
+const { msgHandler } = require('../msg-handler');
 
 const schema = {
   description: '',
@@ -44,7 +44,7 @@ const handler = async (req, reply) => {
   const msg = req.query.message;
 
   try {
-    await msgHandler(msg, info);
+    msgHandler(msg, info);
   } catch (error) {
     console.log(error);
     reply.status(500).send(error);
