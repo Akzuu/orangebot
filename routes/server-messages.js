@@ -9,6 +9,12 @@ const schema = {
       id: {
         type: 'string',
       },
+    },
+    required: ['id'],
+  },
+  query: {
+    type: 'object',
+    properties: {
       rconPassword: {
         type: 'string',
       },
@@ -19,7 +25,7 @@ const schema = {
         type: 'string',
       },
     },
-    required: ['id', 'rconPassword', 'rconPort', 'rconAddr'],
+    required: ['rconPassword', 'rconPort', 'rconAddr'],
   },
   body: {
     type: 'string',
@@ -56,7 +62,7 @@ const handler = async (req, reply) => {
 
 module.exports = {
   method: 'POST',
-  url: 'log/:id/addr/:rconAddr/port/:rconPort/pw/:rconPassword',
+  url: '/id/:id/log',
   handler,
   schema,
 };
