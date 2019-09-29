@@ -37,9 +37,9 @@ const schema = {
 
 const handler = async (req, reply) => {
   const info = {
-    address: req.params.rconAddr,
-    port: req.params.rconPort,
-    rconPass: req.params.rconPass,
+    address: req.query.rconAddr,
+    port: req.query.rconPort,
+    rconPass: req.query.rconPass,
     container: req.params.id,
   };
   const messages = req.body.split('\n');
