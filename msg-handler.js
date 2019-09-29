@@ -7,6 +7,7 @@ const { named } = require('named-regexp');
 const nconf = require('nconf');
 const fs = require('fs');
 const ipModule = require('ip');
+const TelegramBot = require('node-telegram-bot-api');
 const defaults = require('./default-config.json');
 
 // Require bot modules
@@ -35,7 +36,6 @@ const bot = {
 
 // Read configs
 if (nconf.get('ip') === '') nconf.set('ip', ipModule.address());
-
 const admins = nconf.get('admins');
 const whitelist = nconf.get('whitelist');
 const telegram = nconf.get('telegram');
@@ -45,6 +45,13 @@ for (const i in admins) {
   if (admins.hasOwnProperty(i)) {
     bot.admins64.push(Utils.id64(admins[i]));
   }
+}
+
+
+if (telegram && telegram.token.length && telegram.groupId.length) {
+  bot.telegramBot = new TelegramBot(telegram.token, {
+    polling: true,
+  });
 }
 
 if (bot.hasOwnProperty('telegramBot')) {
@@ -136,8 +143,10 @@ const msgHandler = (msg, info) => {
   let param; let cmd; let re; let
     match;
 
+  console.log(info.container);
   if (bot.servers[info.container] === undefined) {
-    bot.servers[addr] = new Server({
+    console.log('aina taalla');
+    bot.servers[info.container] = new Server({
       address: addr,
       pass: info.rconPass,
       nconf,

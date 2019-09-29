@@ -5,13 +5,12 @@
 // Require dependencies
 const nconf = require('nconf');
 const fs = require('fs');
-
-
-const TelegramBot = require('node-telegram-bot-api');
-
 const ipModule = require('ip');
+
+const { initServer } = require('./http-server');
 const defaults = require('./default-config.json');
 
+// Load configs
 (function loadConfigs() {
   const confPath = './config.json';
 
@@ -28,17 +27,11 @@ const defaults = require('./default-config.json');
 // Read configs
 if (nconf.get('ip') === '') nconf.set('ip', ipModule.address());
 
-// const pool = nconf.get('pool');
-const telegram = nconf.get('telegram');
 
-// Storing the bot state
-const bot = {
-  admins64: [],
-  servers: {},
-};
+process.on('uncaughtException', (err) => {
+  console.log(err);
+});
 
-// Create HTTP server
-const { initServer } = require('./http-server');
 
 const startHttpServer = async () => {
   const server = await initServer({ logger: false }, nconf.get('port'));
@@ -46,23 +39,6 @@ const startHttpServer = async () => {
 };
 
 startHttpServer();
-
-if (telegram && telegram.token.length && telegram.groupId.length) {
-  bot.telegramBot = new TelegramBot(telegram.token, {
-    polling: true,
-  });
-}
-
-// Add static servers
-// for (const i in statics) {
-//   if (statics.hasOwnProperty(i)) {
-//     addServer(statics[i].host, statics[i].port, statics[i].pass);
-//   }
-// }
-
-process.on('uncaughtException', (err) => {
-  console.log(err);
-});
 
 console.log(`OrangeBot listening on ${nconf.get('port')}`);
 console.log('Run this in CS console to connect or configure orangebot.js:');
