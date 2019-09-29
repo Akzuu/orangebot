@@ -48,7 +48,7 @@ const handler = async (req, reply) => {
 
   console.log('Oletettu array: ', messages);
 
-  if (!messages || Array.isArray(messages) || messages.length === 0) {
+  if (!messages || !Array.isArray(messages) || messages.length === 0) {
     reply.code(400).send({
       status: 'No Body',
     });
