@@ -15,7 +15,7 @@ const schema = {
   query: {
     type: 'object',
     properties: {
-      rconPassword: {
+      rconPass: {
         type: 'string',
       },
       rconPort: {
@@ -25,7 +25,7 @@ const schema = {
         type: 'string',
       },
     },
-    required: ['rconPassword', 'rconPort', 'rconAddr'],
+    required: ['rconPass', 'rconPort', 'rconAddr'],
   },
   body: {
     type: 'string',
