@@ -3,7 +3,7 @@ const fastifySwagger = require('fastify-swagger');
 const routes = require('./routes');
 
 // Initialize swagger
-const initSwagger = () => ({
+const initSwagger = (port) => ({
   routePrefix: '/documentation',
   swagger: {
     info: {
@@ -11,6 +11,8 @@ const initSwagger = () => ({
       description: 'Bot for AKL servers',
       version: '1.0.0',
     },
+    host: `0.0.0.0:${port}`,
+    schemes: ['http', 'https'],
     consumes: ['application/json'],
     produces: ['application/json'],
   },
@@ -31,7 +33,7 @@ const initServer = async (options, port) => {
   const server = fastify(options);
 
   server
-    .register(fastifySwagger, initSwagger())
+    .register(fastifySwagger, initSwagger(port))
     .register(serverRoutes, { prefix: '/server' });
 
 
