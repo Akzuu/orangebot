@@ -138,14 +138,12 @@ const msgHandler = (msg, info) => {
   const addr = `${info.address}:${info.port}`;
   const text = msg.toString();
 
-  console.log(`<${addr}> ${Utils.clean(text).substring(3)}`);
+  // console.log(`<${addr}> ${Utils.clean(text).substring(3)}`);
 
   let param; let cmd; let re; let
     match;
 
-  console.log(info.container);
   if (bot.servers[info.container] === undefined) {
-    console.log('aina taalla');
     bot.servers[info.container] = new Server({
       address: addr,
       pass: info.rconPass,

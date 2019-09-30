@@ -43,10 +43,7 @@ const handler = async (req, reply) => {
     container: req.params.id,
   };
   console.log('Info: ', info);
-  console.log('Body: ', req.body);
   const messages = req.body.split('\n');
-
-  console.log('Oletettu array: ', messages);
 
   if (!messages || !Array.isArray(messages) || messages.length === 0) {
     reply.code(400).send({
