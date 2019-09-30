@@ -50,19 +50,17 @@ const handler = async (req, reply) => {
       status: 'No Body',
     });
   }
-  try {
-    messages.forEach((msg) => {
+
+  messages.forEach((msg) => {
+    try {
       msgHandler(msg, info);
-    });
-  } catch (error) {
-    console.log(error);
-    reply.status(500).send(error);
-    return;
-  }
+    } catch (error) {
+      console.log('Error 500: Something weird happened! ', msg, error);
+    }
+  });
 
   reply.send({
     status: 'OK',
-    date: new Date(),
   });
 };
 
