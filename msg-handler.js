@@ -75,10 +75,10 @@ if (bot.hasOwnProperty('telegramBot')) {
       if (match !== null) {
         const addr = match.capture('addr');
         if (message.match(/^!/)) {
-          bot.servers[addr].say(message);
+          bot.servers[info.container].say(message);
         } else {
-          bot.servers[addr].chat(` \x06Admin: \x10${message}`);
-          bot.servers[addr].center(`Admin: ${message}`);
+          bot.servers[info.container].chat(` \x06Admin: \x10${message}`);
+          bot.servers[info.container].center(`Admin: ${message}`);
         }
       }
     }
@@ -166,20 +166,20 @@ const msgHandler = (msg, info) => {
       // Check if connecting user is a player
       request(`https://akl.gg/akl-service/api/users/communityid/${conId64}`, (error, response, body) => {
         if (error) {
-          bot.servers[addr].chat(` \x10Letting ${conName} connect because AKL API is not responding.`);
+          bot.servers[info.container].chat(` \x10Letting ${conName} connect because AKL API is not responding.`);
           return;
         }
 
         if (response.statusCode === 200) {
-          bot.servers[addr].chat(` \x10${conName} (connecting) is a registered user.`);
+          bot.servers[info.container].chat(` \x10${conName} (connecting) is a registered user.`);
         } else if (Utils.whitelisted(conId, whitelist)) {
-          bot.servers[addr].chat(` \x10${conName} (connecting) is whitelisted.`);
+          bot.servers[info.container].chat(` \x10${conName} (connecting) is whitelisted.`);
         } else if (response.statusCode === 504) {
-          bot.servers[addr].chat(` \x10Letting ${conName} connect because AKL API is not responding.`);
+          bot.servers[info.container].chat(` \x10Letting ${conName} connect because AKL API is not responding.`);
           return;
         } else {
-          bot.servers[addr].chat(` \x10${conName} tried to connect, but is not registered.`);
-          bot.servers[addr].rcon(`kickid ${conId} This account is not registered on akl.gg`);
+          bot.servers[info.container].chat(` \x10${conName} tried to connect, but is not registered.`);
+          bot.servers[info.container].rcon(`kickid ${conId} This account is not registered on akl.gg`);
         }
 
         if (body.match(/(ROLE_ADMIN|ROLE_REFEREE)/gm) && bot.admins64.indexOf(conId64) < 0) {
@@ -194,7 +194,7 @@ const msgHandler = (msg, info) => {
   // match = re.exec(text);
   // if (match !== null) {
   //   console.log('phase_end')
-  //   // bot.servers[addr].halftime();
+  //   // bot.servers[info.container].halftime();
   // }
 
 
@@ -202,7 +202,7 @@ const msgHandler = (msg, info) => {
   // match = re.exec(text);
   // if (match !== null) {
   //   console.log('start_halftime');
-  //   bot.servers[addr].halftime();
+  //   bot.servers[info.container].halftime();
   // }
 
   // Join to a team
@@ -211,20 +211,20 @@ const msgHandler = (msg, info) => {
   );
   match = re.exec(text);
   if (match !== null) {
-    if (bot.servers[addr].state.players[match.capture('steam_id')] === undefined) {
+    if (bot.servers[info.container].state.players[match.capture('steam_id')] === undefined) {
       if (match.capture('steam_id') !== 'BOT') {
         const player = {};
         player.steamid = match.capture('steam_id');
         player.name = match.capture('user_name');
         player.team = match.capture('new_team');
-        bot.servers[addr].state.players[match.capture('steam_id')] = player;
+        bot.servers[info.container].state.players[match.capture('steam_id')] = player;
       }
     } else {
-      bot.servers[addr].state.players[match.capture('steam_id')].steamid = match.capture('steam_id');
-      bot.servers[addr].state.players[match.capture('steam_id')].team = match.capture('new_team');
-      bot.servers[addr].state.players[match.capture('steam_id')].name = match.capture('user_name');
+      bot.servers[info.container].state.players[match.capture('steam_id')].steamid = match.capture('steam_id');
+      bot.servers[info.container].state.players[match.capture('steam_id')].team = match.capture('new_team');
+      bot.servers[info.container].state.players[match.capture('steam_id')].name = match.capture('user_name');
     }
-    bot.servers[addr].lastlog = new Date().getTime();
+    bot.servers[info.container].lastlog = new Date().getTime();
   }
 
   // Clantag
@@ -232,11 +232,11 @@ const msgHandler = (msg, info) => {
   // match = re.exec(text);
   // if (match !== null) {
   //   if (match.capture("team") === 'TERRORIST') {
-  //     bot.servers[addr].state.setClan.TERRORIST = match.capture("clan_tag");
+  //     bot.servers[info.container].state.setClan.TERRORIST = match.capture("clan_tag");
   //   } else if (match.capture("team") === 'CT') {
-  //     bot.servers[addr].state.setClan.CT = match.capture("clan_tag");
+  //     bot.servers[info.container].state.setClan.CT = match.capture("clan_tag");
   //   }
-  //   bot.servers[addr].lastlog = new Date().getTime();
+  //   bot.servers[info.container].lastlog = new Date().getTime();
   // }
 
 
@@ -246,38 +246,38 @@ const msgHandler = (msg, info) => {
   );
   match = re.exec(text);
   if (match !== null) {
-    if (bot.servers[addr].state.players[match.capture('steam_id')] !== undefined) {
-      delete bot.servers[addr].state.players[match.capture('steam_id')];
+    if (bot.servers[info.container].state.players[match.capture('steam_id')] !== undefined) {
+      delete bot.servers[info.container].state.players[match.capture('steam_id')];
     }
-    bot.servers[addr].lastlog = new Date().getTime();
+    bot.servers[info.container].lastlog = new Date().getTime();
   }
 
   // Map loading
   re = named(/Loading map "(:<map>.*?)"/);
   match = re.exec(text);
   if (match !== null) {
-    for (const prop in bot.servers[addr].state.players) {
-      if (bot.servers[addr].state.players.hasOwnProperty(prop)) {
-        delete bot.servers[addr].state.players[prop];
+    for (const prop in bot.servers[info.container].state.players) {
+      if (bot.servers[info.container].state.players.hasOwnProperty(prop)) {
+        delete bot.servers[info.container].state.players[prop];
       }
     }
-    bot.servers[addr].lastlog = new Date().getTime();
+    bot.servers[info.container].lastlog = new Date().getTime();
   }
 
   // Map started
   re = named(/Started map "(:<map>.*?)"/);
   match = re.exec(text);
   if (match !== null) {
-    bot.servers[addr].newmap(match.capture('map'));
-    bot.servers[addr].lastlog = new Date().getTime();
+    bot.servers[info.container].newmap(match.capture('map'));
+    bot.servers[info.container].lastlog = new Date().getTime();
   }
 
   // Round start
   re = named(/World triggered "Round_Start"/);
   match = re.exec(text);
   if (match !== null) {
-    bot.servers[addr].round();
-    bot.servers[addr].lastlog = new Date().getTime();
+    bot.servers[info.container].round();
+    bot.servers[info.container].lastlog = new Date().getTime();
   }
 
   // Round end
@@ -289,9 +289,9 @@ const msgHandler = (msg, info) => {
     const tScore = parseInt(match.capture('t_score'), 10);
     const ctScore = parseInt(match.capture('ct_score'), 10);
     if (ctScore + tScore === 15) {
-      bot.servers[addr].halftime();
+      bot.servers[info.container].halftime();
     } else if ((ctScore + tScore + 3) % 6 === 0) {
-      bot.servers[addr].halftime();
+      bot.servers[info.container].halftime();
     }
 
 
@@ -299,8 +299,8 @@ const msgHandler = (msg, info) => {
       TERRORIST: tScore,
       CT: ctScore,
     };
-    bot.servers[addr].score(score);
-    bot.servers[addr].lastlog = new Date().getTime();
+    bot.servers[info.container].score(score);
+    bot.servers[info.container].lastlog = new Date().getTime();
   }
 
   // Map end xd
@@ -309,10 +309,10 @@ const msgHandler = (msg, info) => {
   if (match !== null) {
     const tScore = parseInt(match.capture('t_score'), 10);
     const ctScore = parseInt(match.capture('ct_score'), 10);
-    bot.servers[addr].mapEnd(tScore, ctScore);
+    bot.servers[info.container].mapEnd(tScore, ctScore);
     console.log(tScore);
     console.log(ctScore);
-    bot.servers[addr].lastlog = new Date().getTime();
+    bot.servers[info.container].lastlog = new Date().getTime();
   }
 
   // !command
@@ -321,7 +321,7 @@ const msgHandler = (msg, info) => {
   );
   match = re.exec(text);
   if (match !== null) {
-    const isAdmin = match.capture('user_id') === '0' || bot.servers[addr].admin(match.capture('steam_id'));
+    const isAdmin = match.capture('user_id') === '0' || bot.servers[info.container].admin(match.capture('steam_id'));
     param = match.capture('text').split(' ');
     // eslint-disable-next-line prefer-destructuring
     cmd = param[0];
@@ -339,99 +339,99 @@ const msgHandler = (msg, info) => {
             },
           );
         } else {
-          bot.servers[addr].chat(' \x05Telegram bot is not set.');
+          bot.servers[info.container].chat(' \x05Telegram bot is not set.');
         }
         break;
       case 'restore':
       case 'replay':
-        if (isAdmin) bot.servers[addr].restore(param);
+        if (isAdmin) bot.servers[info.container].restore(param);
         break;
       case 'status':
       case 'stats':
       case 'score':
       case 'scores':
-        bot.servers[addr].stats(true);
+        bot.servers[info.container].stats(true);
         break;
       case 'restart':
       case 'reset':
       case 'warmup':
-        if (isAdmin) bot.servers[addr].warmup();
+        if (isAdmin) bot.servers[info.container].warmup();
         break;
       case 'maps':
       case 'map':
       case 'start':
       case 'match':
       case 'startmatch':
-        if (isAdmin || !bot.servers[addr].get().live) {
-          bot.servers[addr].start(param);
+        if (isAdmin || !bot.servers[info.container].get().live) {
+          bot.servers[info.container].start(param);
         }
         break;
       case 'force':
-        if (isAdmin) bot.servers[addr].ready(true);
+        if (isAdmin) bot.servers[info.container].ready(true);
         break;
       case 'resume':
       case 'ready':
       case 'rdy':
       case 'unpause':
-        bot.servers[addr].ready(match.capture('user_team'));
+        bot.servers[info.container].ready(match.capture('user_team'));
         break;
       case 'pause':
-        bot.servers[addr].pause();
+        bot.servers[info.container].pause();
         break;
       case 'stay':
-        bot.servers[addr].stay(match.capture('user_team'));
+        bot.servers[info.container].stay(match.capture('user_team'));
         break;
       case 'swap':
       case 'switch':
-        bot.servers[addr].swap(match.capture('user_team'));
+        bot.servers[info.container].swap(match.capture('user_team'));
         break;
       case 'knife':
-        bot.servers[addr].knife();
+        bot.servers[info.container].knife();
         break;
       case 'disconnect':
       case 'quit':
       case 'leave':
         if (isAdmin) {
-          bot.servers[addr].quit();
-          delete bot.servers[addr];
+          bot.servers[info.container].quit();
+          delete bot.servers[info.container];
           console.log(`Disconnected from ${addr}`);
         }
         break;
       case 'say':
         if (isAdmin) {
-          bot.servers[addr].chat(` \x06Admin: \x10${param.join(' ')}`);
-          bot.servers[addr].center(`Admin: ${param.join(' ')}`);
+          bot.servers[info.container].chat(` \x06Admin: \x10${param.join(' ')}`);
+          bot.servers[info.container].center(`Admin: ${param.join(' ')}`);
         }
         break;
       case 'whitelist':
         if (isAdmin) whitelist.push(param.join(' '));
         break;
       case 'debug':
-        bot.servers[addr].debug();
+        bot.servers[info.container].debug();
         break;
       case 'ban':
-        bot.servers[addr].ban(param, match.capture('user_team'));
+        bot.servers[info.container].ban(param, match.capture('user_team'));
         break;
       case 'pick':
-        bot.servers[addr].pick(param, match.capture('user_team'));
+        bot.servers[info.container].pick(param, match.capture('user_team'));
         break;
       case 'bo1':
-        bot.servers[addr].matchformat('bo1');
+        bot.servers[info.container].matchformat('bo1');
         break;
       case 'bo3':
-        bot.servers[addr].matchformat('bo3');
+        bot.servers[info.container].matchformat('bo3');
         break;
       case 'matchformat':
-        if (isAdmin) bot.servers[addr].matchformat(param[0]);
+        if (isAdmin) bot.servers[info.container].matchformat(param[0]);
         break;
       case 'team':
-        bot.servers[addr].setClanName(param, match.capture('user_team'));
+        bot.servers[info.container].setClanName(param, match.capture('user_team'));
         break;
       default:
         break;
     }
 
-    bot.servers[addr].lastlog = new Date().getTime();
+    bot.servers[info.container].lastlog = new Date().getTime();
   }
 };
 
